@@ -50,6 +50,36 @@ pdf_response = client.ocr.process(
 )
 response_dict = json.loads(pdf_response.model_dump_json())
 
+# -------- Upload Base64 to Cloudinary --------
+def upload_base64_to_cloudinary(base64_data: str, img_id: str) -> str:
+    """
+    Uploads base64 image data to Cloudinary and returns the optimized image URL.
+    """
+    try:
+        # Ensure base64 data is properly formatted
+        if ',' in base64_data:
+            base64_data = base64_data.split(',')[1]
+        
+        # Remove any extension from img_id
+        img_id = os.path.splitext(img_id)[0]
+        
+        # Decode base64 data
+        image_data = base64.b64decode(base64_data)
+        
+        # Save to temporary file first to ensure valid image
+        temp_file = f"temp_{img_id}"
+        with open(temp_file, "wb") as f:
+            f.write(image_data)
+        
+        # Upload to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            temp_file,
+            public_id=f"ocr_images/{img_id}",
+            resource_type="image",
+            format="png"
+        )
+        
+
 
 # -------- Generate and Save Markdown --------
 combined_markdown = get_combined_markdown(pdf_response)
