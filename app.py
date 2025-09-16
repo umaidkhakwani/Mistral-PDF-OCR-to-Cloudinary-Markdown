@@ -79,6 +79,17 @@ def upload_base64_to_cloudinary(base64_data: str, img_id: str) -> str:
             format="png"
         )
         
+        # Clean up temporary file
+        os.remove(temp_file)
+        
+        # Use the secure_url directly from the upload result
+        return upload_result['secure_url']
+        
+    except Exception as e:
+        print(f"Error uploading image {img_id}: {str(e)}")
+        # Print base64 data length for debugging
+        print(f"Base64 data length: {len(base64_data)}")
+        return f"https://via.placeholder.com/150?text=Upload+Failed"
 
 
 # -------- Generate and Save Markdown --------
