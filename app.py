@@ -91,6 +91,16 @@ def upload_base64_to_cloudinary(base64_data: str, img_id: str) -> str:
         print(f"Base64 data length: {len(base64_data)}")
         return f"https://via.placeholder.com/150?text=Upload+Failed"
 
+def replace_images_in_markdown(markdown_str: str, images_dict: dict) -> str:
+    """
+    Replace image placeholders in markdown with Cloudinary URLs.
+    """
+    for img_name, image_url in images_dict.items():
+        markdown_str = markdown_str.replace(
+            f"![{img_name}]({img_name})", f"![{img_name}]({image_url})"
+        )
+    return markdown_str
+
 
 # -------- Generate and Save Markdown --------
 combined_markdown = get_combined_markdown(pdf_response)
