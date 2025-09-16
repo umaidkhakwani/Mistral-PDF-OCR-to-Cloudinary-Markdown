@@ -101,6 +101,18 @@ def replace_images_in_markdown(markdown_str: str, images_dict: dict) -> str:
         )
     return markdown_str
 
+def get_combined_markdown(ocr_response: OCRResponse) -> str:
+    """
+    Combine OCR text and images into a single markdown document.
+    """
+    markdowns: list[str] = []
+    images_dict = {}
+    for page in ocr_response.pages:
+        for img in page.images:
+            img_url = upload_base64_to_cloudinary(img.image_base64, img.id)
+            images_dict[img.id] = img_url
+        markdowns.append(replace_images_in_markdown(page.markdown, images_dict))
+    return "\n\n".join(markdowns)
 
 # -------- Generate and Save Markdown --------
 combined_markdown = get_combined_markdown(pdf_response)
